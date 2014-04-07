@@ -20,6 +20,18 @@
 
 namespace lunette {
     namespace registry {
+        lunette::string get_string(registry::root root, lunette::string const & path, lunette::string const & name) {
+            return get_string(root, path, name.empty() ? 0 : name.c_str());
+        }
+        
+        lunette::string get_string(registry::root root, lunette::string const & path, char_type const * name) {
+            return get_string(handle(root, path), name);
+        }
+
+        lunette::string get_string(registry::root root, lunette::string const & path) {
+            return get_string(root, path, 0);
+        }
+
         lunette::string get_string(handle const & handle) {
             return std::move(get_string(handle, lunette::string()));
         }

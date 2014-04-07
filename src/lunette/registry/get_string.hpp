@@ -21,6 +21,10 @@
 
 namespace lunette {
     namespace registry {
+        lunette::string get_string(registry::root root, lunette::string const & path, lunette::string const & name);
+        lunette::string get_string(registry::root root, lunette::string const & path, char_type const * name);
+        lunette::string get_string(registry::root root, lunette::string const & path);
+
         lunette::string get_string(handle const & handle);
         lunette::string get_string(handle const & handle, lunette::string const & name);
         lunette::string get_string(handle const & handle, char_type const * name);
