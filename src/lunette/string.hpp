@@ -13,21 +13,22 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 //
-#ifndef GUARD_LUNETTE_REGISTRY_REGISTRY_VALUE_ERROR_HPP_INCLUDED
-#define GUARD_LUNETTE_REGISTRY_REGISTRY_VALUE_ERROR_HPP_INCLUDED
 
-#include <stdexcept>
+#ifndef GUARD_LUNETTE_STRING_HPP_INCLUDED
+#define GUARD_LUNETTE_STRING_HPP_INCLUDED
+
+#include <string>
 
 namespace lunette {
-    namespace registry {
-        class registry_value_error : public std::runtime_error {
-        public:
-            registry_value_error(char const * what_arg)
-            : std::runtime_error(what_arg)
-            {}
-        };
-    }
+#if (defined(WIN32) || defined(WIN64)) && defined(UNICODE)
+#   define LUNETTE_TEXT(LITERAL) L##LITERAL
+    typedef std::wstring string;
+#else
+#   define LUNETTE_TEXT(LITERAL) LITERAL
+    typedef std::string string;
+#endif
+    typedef string::value_type char_type;
 }
 
-#endif // GUARD_LUNETTE_REGISTRY_REGISTRY_VALUE_ERROR_HPP_INCLUDED
+#endif //GUARD_LUNETTE_STRING_HPP_INCLUDED
 

@@ -25,13 +25,13 @@ namespace lunette {
             bool result = false;
             if( RegQueryInfoKeyA(key(h), 0, 0, 0, &numKeys, &maxSubKeyLength, 0, 0, 0, 0, 0, 0) == ERROR_SUCCESS ) {
                 result = true;
-                std::vector<char> keyBuffer;
+                std::vector<char_type> keyBuffer;
                 ++maxSubKeyLength; // Increase for terminating character (required by API)
                 for( DWORD i = 0; i < numKeys; ++i ) {
                     keyBuffer.clear();
                     keyBuffer.resize(maxSubKeyLength, 0);
-                    if( RegEnumKeyA(key(h), i, keyBuffer.data(), maxSubKeyLength) == ERROR_SUCCESS ) {
-                        if( callback(keyBuffer.empty() ? "" : &keyBuffer[0]) == enum_result::exit ) {
+                    if( RegEnumKey(key(h), i, keyBuffer.data(), maxSubKeyLength) == ERROR_SUCCESS ) {
+                        if( callback(keyBuffer.empty() ? LUNETTE_TEXT("") : &keyBuffer[0]) == enum_result::exit ) {
                             break;
                         }
                     }
@@ -40,20 +40,20 @@ namespace lunette {
             return result;
         }
 
-        bool enum_keys(registry::root root, std::string const & path,  enum_key_callback callback) {
+        bool enum_keys(registry::root root, lunette::string const & path,  enum_key_callback callback) {
             return enum_keys(handle(root, path), callback);
         }
 
-        std::vector<std::string> enum_keys(handle const & h) {
-            std::vector<std::string> result;
-            enum_keys(h, [&result](std::string const & key) {
+        std::vector<lunette::string> enum_keys(handle const & h) {
+            std::vector<lunette::string> result;
+            enum_keys(h, [&result](lunette::string const & key) {
                 result.emplace_back(key);
                 return enum_result::cont;
             });
-            return result;
+            return std::move(result);
         }
 
-        std::vector<std::string> enum_keys(registry::root root, std::string const & path) {
+        std::vector<lunette::string> enum_keys(registry::root root, lunette::string const & path) {
             return std::move(enum_keys(registry::handle(root, path)));
         }
     }

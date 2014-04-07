@@ -115,7 +115,7 @@ namespace lunette {
         : handle_(root2handle(root))
         {}
 
-        handle::handle(registry::root root, char const * path)
+        handle::handle(registry::root root, char_type const * path)
         : handle_(root2handle(root))
         {
             if( !open(path) ) {
@@ -123,7 +123,7 @@ namespace lunette {
             }
         }
 
-        handle::handle(registry::root root, std::string const & path)
+        handle::handle(registry::root root, lunette::string const & path)
             : handle_(root2handle(root))
         {
             if( !open(path) ) {
@@ -165,9 +165,9 @@ namespace lunette {
             handle_ = 0;
         }
 
-        bool handle::open(char const * path) {
+        bool handle::open(char_type const * path) {
             handle tmp(handle_);
-            LSTATUS status = RegOpenKeyA(key(tmp), path, ref(tmp));
+            LSTATUS status = RegOpenKey(key(tmp), path, ref(tmp));
             if( status == ERROR_SUCCESS ) {
                 swap(tmp);
                 return true;
@@ -175,7 +175,7 @@ namespace lunette {
             return false;
         }
 
-        bool handle::open(std::string const & path) {
+        bool handle::open(lunette::string const & path) {
             return open(path.c_str());
         }
 

@@ -29,20 +29,20 @@ namespace lunette {
                           value_type type,
                           detail::value_storage_type const & source) {
                 switch(type) {
-                    case value_type::binary:
-                        typed_clone_to<std::vector<std::uint8_t>>(destination, source);
-                        break;
                     case value_type::string:
                     case value_type::multi_string:
                     case value_type::expand_string:
-                        typed_clone_to<std::string>(destination, source);
+                        typed_clone_to<lunette::string>(destination, source);
                         break;
-                    default:
                     case value_type::qword_le:
                     case value_type::dword_le:
                     case value_type::dword_be:
                         memcpy(&destination, &source, sizeof(detail::value_storage_type));
                         break;
+                        break;
+                    default:
+                    case value_type::binary:
+                        typed_clone_to<std::vector<std::uint8_t>>(destination, source);
                         break;
                }
             }
@@ -53,7 +53,35 @@ namespace lunette {
                 memcpy(&a, &b, sizeof(detail::value_storage_type));
                 memcpy(&b, &c, sizeof(detail::value_storage_type));
             }
+
+            template< typename T >
+            void destruct( T * p ) {
+                p->~T();
+            }
         }
+
+        value::~value() {
+            switch(value_) {
+                case value_type::none:
+                case value_type::qword_le:
+                case value_type::dword_le:
+                case value_type::dword_be:
+                    break; //nothing to do
+                case value_type::string:
+                case value_type::multi_string:
+                case value_type::expand_string:
+                    destruct(reinterpret_cast<lunette::string*>(&storage_));
+                    break;
+                case value_type::link:
+                case value_type::resource_list:
+                case value_type::full_resource_descriptor:
+                case value_type::resource_requirements_list:
+                case value_type::binary:
+                    destruct(reinterpret_cast<std::vector<uint8_t>*>(&storage_));
+                    break;
+            }
+        }
+
         value::value()
         : value_(value_type::none)
         , storage_()

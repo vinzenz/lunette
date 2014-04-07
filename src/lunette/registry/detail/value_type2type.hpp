@@ -17,9 +17,9 @@
 #define GUARD_LUNETTE_REGISTRY_DETAIL_VALUE_TYPE2TYPE_HPP_INCLUDED
 
 #include <cstdint>
-#include <string>
 #include <vector>
 
+#include <lunette/string.hpp>
 #include <lunette/registry/value_type.hpp>
 
 namespace lunette {
@@ -35,9 +35,9 @@ namespace lunette {
             }
 
             LUNETTE_REGISTRY_VALUETYPE(binary, std::vector<std::uint8_t>);
-            LUNETTE_REGISTRY_VALUETYPE(string, std::string);
-            LUNETTE_REGISTRY_VALUETYPE(multi_string, std::string);
-            LUNETTE_REGISTRY_VALUETYPE(expand_string, std::string);
+            LUNETTE_REGISTRY_VALUETYPE(string, lunette::string);
+            LUNETTE_REGISTRY_VALUETYPE(multi_string, lunette::string);
+            LUNETTE_REGISTRY_VALUETYPE(expand_string, lunette::string);
             LUNETTE_REGISTRY_VALUETYPE(dword_le, std::uint32_t);
             LUNETTE_REGISTRY_VALUETYPE(dword_be, std::uint32_t);
             LUNETTE_REGISTRY_VALUETYPE(qword_le, std::uint64_t);

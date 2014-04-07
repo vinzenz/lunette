@@ -16,8 +16,7 @@
 #ifndef GUARD_LUNETTE_REGISTRY_HANDLE_HPP_INCLUDED
 #define GUARD_LUNETTE_REGISTRY_HANDLE_HPP_INCLUDED
 
-#include <string>
-
+#include <lunette/string.hpp>
 #include <lunette/registry/root.hpp>
 #include <lunette/registry/view_mode.hpp>
 
@@ -29,8 +28,8 @@ namespace lunette {
 
             handle();
             handle(registry::root root);
-            handle(registry::root root, char const * path);
-            handle(registry::root root, std::string const &);
+            handle(registry::root root, char_type const * path);
+            handle(registry::root root, lunette::string const &);
             handle(handle_t handle);
             handle(handle const & h);
             handle(handle && h);
@@ -42,8 +41,8 @@ namespace lunette {
             void close();
 
             bool open(registry::root root);
-            bool open(char const * path);
-            bool open(std::string const &);
+            bool open(char_type const * path);
+            bool open(lunette::string const &);
 
 
             bool is_open() const;
