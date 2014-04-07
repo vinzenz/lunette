@@ -86,12 +86,14 @@ namespace lunette {
             }
 
             inline void convert(std::vector<uint8_t> & stored, uint8_t const * data, size_t data_len) {
-                stored.assign(data, data + data_len);
+                std::vector<uint8_t> stmp(data, data + data_len);
+                stmp.swap(stored);
             }
 
             inline void convert(lunette::string & stored, uint8_t const * data, size_t data_len) {
                 char_type const * ptr = reinterpret_cast<char_type const *>(data);
-                stored.assign(ptr, ptr + (data_len / sizeof(char_type)));
+                lunette::string stmp(data, data + data_len);
+                stmp.swap(stored);
             }
 
             template<value_type type>
@@ -105,26 +107,37 @@ namespace lunette {
                 switch(to_value_type(reg_type)) {
                 case value_type::binary:
                     convert_value<value_type::binary>(val, data, data_len);
+                    break;
                 case value_type::dword_le:
                     convert_value<value_type::dword_le>(val, data, data_len);
+                    break;
                 case value_type::dword_be:
                     convert_value<value_type::dword_be>(val, data, data_len);
+                    break;
                 case value_type::qword_le:
                     convert_value<value_type::qword_le>(val, data, data_len);
+                    break;
                 case value_type::string:
                     convert_value<value_type::string>(val, data, data_len);
+                    break;
                 case value_type::expand_string:
                     convert_value<value_type::expand_string>(val, data, data_len);
+                    break;
                 case value_type::multi_string:
                     convert_value<value_type::multi_string>(val, data, data_len);
+                    break;
                 case value_type::link:
                     convert_value<value_type::link>(val, data, data_len);
+                    break;
                 case value_type::resource_requirements_list:
                     convert_value<value_type::resource_requirements_list>(val, data, data_len);
+                    break;
                 case value_type::full_resource_descriptor:
                     convert_value<value_type::full_resource_descriptor>(val, data, data_len);
+                    break;
                 case value_type::resource_list:
                     convert_value<value_type::resource_list>(val, data, data_len);
+                    break;
                 default:
                 case value_type::none:
                     break;

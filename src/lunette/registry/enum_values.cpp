@@ -18,9 +18,6 @@
 
 namespace lunette {
     namespace registry {
-        constexpr size_t DEFAULT_NAME_BUFFER_SIZE   = 2048;
-        constexpr size_t DEFAULT_VALUE_BUFFER_SIZE  = 4096;
-
         namespace {
             struct enum_value_context {
                 std::vector<char_type> name_buffer;
@@ -30,29 +27,16 @@ namespace lunette {
                 DWORD value_type;
             };
 
-            inline void clear(enum_value_context & ctx) {
+            inline void clear(enum_value_context & ctx, size_t value_max, size_t name_max) {
                 ctx.name_buffer.clear();
-                ctx.name_buffer.resize(DEFAULT_NAME_BUFFER_SIZE, 0);
+                ctx.name_buffer.resize(name_max + 1, 0);
                 ctx.name_buffer_size = ctx.name_buffer.size();
 
                 ctx.value_buffer.clear();
-                ctx.value_buffer.resize(DEFAULT_VALUE_BUFFER_SIZE, 0);
+                ctx.value_buffer.resize(value_max + 4, 0);
                 ctx.value_buffer_size = ctx.value_buffer.size();
 
                 ctx.value_type = REG_NONE;
-            }
-
-            inline void resize(enum_value_context & ctx) {
-                if(ctx.name_buffer_size > ctx.name_buffer.size()) {
-                    ctx.name_buffer.clear();
-                    ctx.name_buffer.resize(ctx.name_buffer_size + 1, 0);
-                    ctx.name_buffer_size = ctx.name_buffer.size();
-                }
-                if(ctx.value_buffer_size > ctx.value_buffer.size()) {
-                    ctx.value_buffer.clear();
-                    ctx.value_buffer.resize(ctx.value_buffer_size + 1, 0);
-                    ctx.value_buffer_size = ctx.value_buffer.size();
-                }
             }
 
             LONG enum_item(handle const & h, DWORD index, enum_value_context & ctx) {
@@ -71,18 +55,17 @@ namespace lunette {
         bool enum_values(handle const & h,
                          enum_values_callback callback) {
             DWORD number_of_values = 0;
+            DWORD max_value_length = 0;
+            DWORD max_value_name_length = 0;
             enum_value_context ctx;
             bool result = false;
-            if( RegQueryInfoKey(key(h), 0, 0, 0, 0, 0, 0, &number_of_values, 0, 0, 0, 0) == ERROR_SUCCESS ) {
+            if (RegQueryInfoKey(key(h), 0, 0, 0, 0, 0, 0, &number_of_values, &max_value_name_length, &max_value_length, 0, 0) == ERROR_SUCCESS) {
                 result = true;
 
                 for( DWORD index = 0; index < number_of_values; ++index) {
-                    clear(ctx);
-                    LONG success = ERROR_SUCCESS;
-                    while( (success = enum_item(h, index, ctx)) == ERROR_MORE_DATA) {
-                        resize(ctx);
-                    }
-                    if( success == ERROR_SUCCESS ) {
+                    clear(ctx, max_value_length, max_value_name_length);
+                    LONG success = enum_item(h, index, ctx);
+                    if (success == ERROR_SUCCESS) {
                         value reg_value;
                         convert_value(reg_value,
                                       &ctx.value_buffer[0],
@@ -93,6 +76,9 @@ namespace lunette {
                         lunette::string reg_name(ctx.name_buffer.begin(),
                                                  ctx.name_buffer.end());
                         callback(reg_name, reg_value);
+                    }
+                    else {
+                        result = success == ERROR_NO_MORE_ITEMS;
                     }
                 }
             }

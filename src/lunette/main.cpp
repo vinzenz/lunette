@@ -16,21 +16,27 @@
 
 #include <lunette/registry/enum_keys.hpp>
 #include <lunette/registry/enum_values.hpp>
+#include <lunette/registry/get_string.hpp>
+#include <tchar.h>
 
 int main() {
 
     lunette::registry::handle h(lunette::registry::root::local_machine, LUNETTE_TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"));
     enum_keys(h, [&h](lunette::string const & s) {
-        printf("Key: %s\n", s.c_str());
+        _tprintf(LUNETTE_TEXT("Key: %s\n"), s.c_str());
         lunette::registry::handle h2(h);
         if(h2.open(s)) {
             enum_values(h2, [](lunette::string const & name, lunette::registry::value const & v) {
-                printf("\tValue(string) %s -> Type: %d\n", name.c_str(), uint32_t(v.type()));
+                _tprintf(LUNETTE_TEXT("\tValue(string) %s -> Type: %d\n"), name.c_str(), uint32_t(v.type()));
                 return lunette::registry::enum_result::cont;
             });
         }
         return lunette::registry::enum_result::cont;
     });
+
+
+    lunette::registry::handle stringHandle(lunette::registry::root::local_machine, LUNETTE_TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\URL\\DefaultPrefix"));
+    _tprintf(LUNETTE_TEXT("URL\\Default Prefix\\Default Value = %s\n"), get_string(stringHandle).c_str());
 }
 
 

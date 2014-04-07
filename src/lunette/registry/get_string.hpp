@@ -16,15 +16,14 @@
 #ifndef GUARD_LUNETTE_REGISTRY_GET_STRING_HPP_INCLUDED
 #define GUARD_LUNETTE_REGISTRY_GET_STRING_HPP_INCLUDED
 
-#include <string>
-
+#include <lunette/string.hpp>
 #include <lunette/registry/handle.hpp>
 
 namespace lunette {
     namespace registry {
-        std::string get_string(handle const & handle);
-        std::string get_string(handle const & handle, std::string const & name);
-        std::string get_string(handle const & handle, char const * name);
+        lunette::string get_string(handle const & handle);
+        lunette::string get_string(handle const & handle, lunette::string const & name);
+        lunette::string get_string(handle const & handle, char_type const * name);
     }
 }
 
