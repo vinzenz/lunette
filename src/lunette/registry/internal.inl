@@ -91,7 +91,6 @@ namespace lunette {
             }
 
             inline void convert(lunette::string & stored, uint8_t const * data, size_t data_len) {
-                char_type const * ptr = reinterpret_cast<char_type const *>(data);
                 lunette::string stmp(data, data + data_len);
                 stmp.swap(stored);
             }
